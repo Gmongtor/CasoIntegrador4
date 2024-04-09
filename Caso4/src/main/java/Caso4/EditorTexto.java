@@ -137,10 +137,51 @@ import java.util.Map;
                 JOptionPane.showMessageDialog(this, "La palabra '" + palabraABuscar + "' aparece " + contador + " veces.", "Resultado de la Búsqueda", JOptionPane.INFORMATION_MESSAGE);
             }
         }
+        class Contacto {
+            private String nombre;
+            private String email;
+            private String telefono;
 
+            public Contacto(String nombre, String email, String telefono) {
+                this.nombre = nombre;
+                this.email = email;
+                this.telefono = telefono;
+            }
 
+            // Métodos getters y setters aquí
 
+            @Override
+            public String toString() {
+                return nombre + " - " + email + " - " + telefono;
+            }
+        }
+        private JList<Contacto> listaContactos;
+        private DefaultListModel<Contacto> modeloListaContactos;
 
+        private void inicializarAgendaContactos() {
+            modeloListaContactos = new DefaultListModel<>();
+            listaContactos = new JList<>(modeloListaContactos);
+
+            JFrame ventanaContactos = new JFrame("Agenda de Contactos");
+            ventanaContactos.setSize(400, 300);
+            ventanaContactos.add(new JScrollPane(listaContactos));
+
+            JButton btnAgregarContacto = new JButton("Agregar Contacto");
+            btnAgregarContacto.addActionListener(e -> agregarContacto());
+            ventanaContactos.add(btnAgregarContacto, BorderLayout.SOUTH);
+
+            ventanaContactos.setVisible(true);
+        }
+
+        private void agregarContacto() {
+            String nombre = JOptionPane.showInputDialog("Nombre del Contacto:");
+            String email = JOptionPane.showInputDialog("Email del Contacto:");
+            String telefono = JOptionPane.showInputDialog("Teléfono del Contacto:");
+
+            if (nombre != null && email != null && telefono != null) {
+                modeloListaContactos.addElement(new Contacto(nombre, email, telefono));
+            }
+        }
         public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new EditorTexto().setVisible(true);
