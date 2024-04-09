@@ -119,15 +119,19 @@ import java.util.Map;
 
 
         private void abrirArchivo() {
-        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File archivo = fileChooser.getSelectedFile();
-            try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
-                textArea.read(reader, null);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo", "Error", JOptionPane.ERROR_MESSAGE);
+            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File archivo = fileChooser.getSelectedFile();
+                JTextArea nuevaAreaTexto = new JTextArea();
+                try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
+                    nuevaAreaTexto.read(reader, null);
+                    JScrollPane scrollPane = new JScrollPane(nuevaAreaTexto);
+                    tabbedPane.addTab(archivo.getName(), scrollPane);
+                    // Configurar seguimiento del ratón y barra de desplazamiento para nuevaAreaTexto o scrollPane aquí.
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
-    }
 
     private void guardarTexto() {
         if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
