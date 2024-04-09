@@ -16,6 +16,7 @@ import java.util.Map;
         private JTextArea textArea;
         private JFileChooser fileChooser;
         private JTabbedPane tabbedPane;
+        private JLabel statusLabel;
 
 
         public Menu() {
@@ -90,6 +91,17 @@ import java.util.Map;
 
             // Añadir el JTabbedPane al JFrame
             add(tabbedPane, BorderLayout.CENTER);
+        }
+        private void inicializarStatusLabel() {
+            statusLabel = new JLabel("Posición del Ratón");
+            add(statusLabel, BorderLayout.SOUTH);
+
+            textArea.addMouseMotionListener(new MouseMotionAdapter() {
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    statusLabel.setText("Posición X: " + e.getX() + ", Posición Y: " + e.getY());
+                }
+            });
         }
 
 
