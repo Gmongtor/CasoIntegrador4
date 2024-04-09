@@ -27,6 +27,7 @@ public class Menu extends JFrame {
     private DefaultListModel<Contacto> modeloListaContactos = new DefaultListModel<>();
     private JList<Contacto> listaContactos = new JList<>(modeloListaContactos);
     private JPanel cardPanel = new JPanel(new CardLayout());
+    private JTabbedPane tabbedPane = new JTabbedPane();
 
     public Menu() {
         inicializarUI();
@@ -62,10 +63,22 @@ public class Menu extends JFrame {
         getContentPane().add(cardPanel, BorderLayout.CENTER);
         getContentPane().add(statusLabel, BorderLayout.SOUTH);
     }
+scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+        @Override
+        public void adjustmentValueChanged(AdjustmentEvent e) {
+            // Calcular el progreso basado en la posición del scroll
+            int max = scrollPane.getVerticalScrollBar().getMaximum();
+            int value = scrollPane.getVerticalScrollBar().getValue(); // Posición actual del scrollbar
+            int extent = scrollPane.getVerticalScrollBar().getModel().getExtent(); // Altura visible del viewport
+            int progreso = (int) (((double) value / (max - extent)) * 100);
+
+            statusLabel.setText("Progreso: " + progreso + "%");
+        }
+    });
 
     private JPanel crearPanelGestorTextos() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(6, 1, 5, 5)); // Organiza los botones en una grilla
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(tabbedPane, BorderLayout.CENTER);
 
         JButton btnNuevoTexto = new JButton("Nuevo Texto");
         btnNuevoTexto.addActionListener(e -> nuevoTexto());
@@ -73,20 +86,25 @@ public class Menu extends JFrame {
         JButton btnAbrirTexto = new JButton("Abrir Texto");
         btnAbrirTexto.addActionListener(e -> abrirArchivo());
 
+        JButton btnGuardarTexto = new JButton("Guardar Texto");
+        btnGuardarTexto.addActionListener(e -> guardarTexto());
+
         JButton btnCompararTextos = new JButton("Comparar Textos");
         btnCompararTextos.addActionListener(e -> compararArchivos());
-
-        JButton btnBuscarEnTexto = new JButton("Buscar en Texto");
-        btnBuscarEnTexto.addActionListener(e -> buscarPalabra());
 
         JButton btnAnalizarTexto = new JButton("Analizar Texto");
         btnAnalizarTexto.addActionListener(e -> analizarTexto());
 
+        JButton btnBuscarEnTexto = new JButton("Buscar en Texto");
+        btnBuscarEnTexto.addActionListener(e -> buscarPalabra());
+
+        // Agregar botones al panel
         panel.add(btnNuevoTexto);
         panel.add(btnAbrirTexto);
+        panel.add(btnGuardarTexto);
         panel.add(btnCompararTextos);
-        panel.add(btnBuscarEnTexto);
         panel.add(btnAnalizarTexto);
+        panel.add(btnBuscarEnTexto);
 
         return panel;
     }
