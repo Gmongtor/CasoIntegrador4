@@ -5,11 +5,13 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Line2D;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 
     public class Menu extends JFrame {
@@ -115,7 +117,39 @@ import java.util.Map;
                 }
             });
         }
+        public class PanelDibujo extends JPanel {
+            private ArrayList<Line2D.Float> lineas = new ArrayList<>();
 
+            public PanelDibujo() {
+                MouseAdapter ma = new MouseAdapter() {
+                    Point inicio = null;
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        inicio = e.getPoint();
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        lineas.add(new Line2D.Float(inicio, e.getPoint()));
+                        inicio = null;
+                        repaint();
+                    }
+                };
+
+                addMouseListener(ma);
+                addMouseMotionListener(ma);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+                for (Line2D.Float linea : lineas) {
+                    g2.draw(linea);
+                }
+            }
+        }
 
 
         private void abrirArchivo() {
