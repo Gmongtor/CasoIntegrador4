@@ -15,6 +15,8 @@ import java.util.Map;
     public class Menu extends JFrame {
         private JTextArea textArea;
         private JFileChooser fileChooser;
+        private JTabbedPane tabbedPane;
+
 
         public Menu() {
             inicializarUI();
@@ -76,6 +78,18 @@ import java.util.Map;
                     toolBar.add(btnAbrir);
                 }
 
+        }
+
+        private void inicializarTabbedPane() {
+            tabbedPane = new JTabbedPane();
+
+            // Ejemplo de cómo añadir una pestaña con un nuevo documento
+            JTextArea areaTexto1 = new JTextArea();
+            JScrollPane scrollPane1 = new JScrollPane(areaTexto1);
+            tabbedPane.addTab("Documento 1", null, scrollPane1, "Primer documento");
+
+            // Añadir el JTabbedPane al JFrame
+            add(tabbedPane, BorderLayout.CENTER);
         }
 
 
@@ -173,9 +187,6 @@ import java.util.Map;
                 this.email = email;
                 this.telefono = telefono;
             }
-
-            // Métodos getters y setters aquí
-
             @Override
             public String toString() {
                 return nombre + " - " + email + " - " + telefono;
