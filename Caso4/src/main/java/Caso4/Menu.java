@@ -15,128 +15,168 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
+        public class Menu extends JFrame {
+            private CardLayout cardLayout = new CardLayout();
+            private JPanel cardPanel = new JPanel(cardLayout);
 
-    public class Menu extends JFrame {
-        CardLayout cardLayout = new CardLayout();
-        JPanel cardPanel = new JPanel(cardLayout);
-
-        // Paneles individuales
-        JPanel gestorDeTextosPanel = new JPanel();
-        JPanel dibujarPanel = new JPanel();
-        JPanel contactosPanel = new JPanel();
-        private JTextArea textArea;
-        private JFileChooser fileChooser;
-        private JTabbedPane tabbedPane;
-        private JLabel statusLabel;
-        private JTextField textFieldEmail;
-        private JLabel labelValidacionEmail;
-
+            private JTextArea textArea = new JTextArea();
+            private JFileChooser fileChooser = new JFileChooser();
+            private DefaultListModel<Contacto> modeloListaContactos = new DefaultListModel<>();
+            private JList<Contacto> listaContactos = new JList<>(modeloListaContactos);
+            private JTextField textFieldNombre = new JTextField(10);
+            private JTextField textFieldEmail = new JTextField(10);
+            private JTextField textFieldTelefono = new JTextField(10);
+            private JLabel labelValidacionEmail = new JLabel();
+            private JTabbedPane tabbedPane;
+            private JLabel statusLabel;
 
 
-        public Menu() {
-            inicializarUI();
-        }
+            public Menu() {
+                inicializarUI();
+            }
 
-        private void inicializarUI() {
-            setTitle("GESTOR DE PUBLICACIONES");
-            setSize(800, 600);
-            setLocationRelativeTo(null);
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            private void inicializarUI() {
+                setTitle("GESTOR DE PUBLICACIONES");
+                setSize(800, 600);
+                setLocationRelativeTo(null);
+                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            // Botones para cambiar entre paneles
-            JButton gestorDeTextosBtn = new JButton("Gestor de Textos");
-            JButton dibujarBtn = new JButton("Dibujar");
-            JButton contactosBtn = new JButton("Contactos");
+                JPanel buttonPanel = new JPanel();
+                JButton gestorDeTextosBtn = new JButton("Gestor de Textos");
+                JButton dibujarBtn = new JButton("Dibujar");
+                JButton contactosBtn = new JButton("Contactos");
+                buttonPanel.add(gestorDeTextosBtn);
+                buttonPanel.add(dibujarBtn);
+                buttonPanel.add(contactosBtn);
 
-            // Panel para los botones
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.add(gestorDeTextosBtn);
-            buttonPanel.add(dibujarBtn);
-            buttonPanel.add(contactosBtn);
+                JPanel gestorDeTextosPanel = new JPanel();
+                JPanel dibujarPanel = new JPanel();
+                JPanel contactosPanel = crearPanelContactos();
 
-            // Añadir los paneles al panel de card
-            cardPanel.add(gestorDeTextosPanel, "Gestor de Textos");
-            cardPanel.add(dibujarPanel, "Dibujar");
-            cardPanel.add(contactosPanel, "Contactos");
+                cardPanel.add(gestorDeTextosPanel, "Gestor de Textos");
+                cardPanel.add(dibujarPanel, "Dibujar");
+                cardPanel.add(contactosPanel, "Contactos");
 
-            // Añadir funcionalidad a los botones
-            gestorDeTextosBtn.addActionListener(e -> cardLayout.show(cardPanel, "Gestor de Textos"));
-            dibujarBtn.addActionListener(e -> cardLayout.show(cardPanel, "Dibujar"));
-            contactosBtn.addActionListener(e -> cardLayout.show(cardPanel, "Contactos"));
+                gestorDeTextosBtn.addActionListener(e -> cardLayout.show(cardPanel, "Gestor de Textos"));
+                dibujarBtn.addActionListener(e -> cardLayout.show(cardPanel, "Dibujar"));
+                contactosBtn.addActionListener(e -> cardLayout.show(cardPanel, "Contactos"));
 
-            // Configurar gestorDeTextosPanel, dibujarPanel, contactosPanel aquí
+                getContentPane().add(buttonPanel, BorderLayout.NORTH);
+                getContentPane().add(cardPanel, BorderLayout.CENTER);
+            }
 
-            // Añadir los paneles al JFrame
-            add(buttonPanel, BorderLayout.NORTH);
-            add(cardPanel, BorderLayout.CENTER);
-        }
+            private JPanel crearPanelContactos() {
+                JPanel contactosPanel = new JPanel();
+                contactosPanel.setLayout(new BorderLayout());
 
-        private JPanel crearPanelGestorTextos() {
-            // Aquí implementas la interfaz del gestor de textos
-            JPanel panel = new JPanel();
-            panel.add(new JLabel("Gestor de Textos"));
-            // Añade tus componentes aquí
-            return panel;
-        }
+                JPanel inputsPanel = new JPanel(new GridLayout(0, 2));
+                inputsPanel.add(new JLabel("Nombre:"));
+                inputsPanel.add(textFieldNombre);
+                inputsPanel.add(new JLabel("Email:"));
+                inputsPanel.add(textFieldEmail);
+                inputsPanel.add(new JLabel("Teléfono:"));
+                inputsPanel.add(textFieldTelefono);
 
-        private JPanel crearPanelDibujar() {
-            // Aquí implementas la interfaz de dibujo
-            JPanel panel = new JPanel();
-            panel.add(new JLabel("Área de Dibujo"));
-            // Añade tus componentes de dibujo aquí
-            return panel;
-        }
+                textFieldEmail.getDocument().addDocumentListener(new DocumentListener() {
+                    public void changedUpdate(DocumentEvent e) { validarEmail(); }
+                    public void removeUpdate(DocumentEvent e) { validarEmail(); }
+                    public void insertUpdate(DocumentEvent e) { validarEmail(); }
 
-        private JPanel crearPanelContactos() {
-            // Aquí implementas la interfaz de contactos
-            JPanel panel = new JPanel();
-            panel.add(new JLabel("Gestión de Contactos"));
-            // Añade tus componentes de contactos aquí
-            return panel;
-        }
+                    private void validarEmail() {
+                        String texto = textFieldEmail.getText();
+                        if (texto.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+                            labelValidacionEmail.setText("Email válido");
+                            labelValidacionEmail.setForeground(Color.GREEN);
+                        } else {
+                            labelValidacionEmail.setText("Email no válido");
+                            labelValidacionEmail.setForeground(Color.RED);
+                        }
+                    }
+                });
 
-        private void crearMenuInicio() {
-            JPanel panelInicio = new JPanel();
-            panelInicio.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+                JButton btnAgregarContacto = new JButton("Agregar Contacto");
+                btnAgregarContacto.addActionListener(e -> agregarContacto());
 
-            JButton btnAbrir = new JButton("Abrir");
-            JButton btnGuardar = new JButton("Guardar");
-            JButton btnComparar = new JButton("Comparar Archivos");
-            JButton btnAnalizar = new JButton("Analizar Texto");
-            JButton btnBuscar = new JButton("Buscar Palabra");
-            JButton btnAgenda = new JButton("Agenda de Contactos");
+                JButton btnEliminarContacto = new JButton("Eliminar Contacto");
+                btnEliminarContacto.addActionListener(e -> eliminarContacto());
 
-            // Añadir funcionalidad a los botones
-            btnAbrir.addActionListener(e -> abrirArchivo());
-            btnGuardar.addActionListener(e -> guardarTexto());
-            btnComparar.addActionListener(e -> compararArchivos());
-            btnAnalizar.addActionListener(e -> analizarTexto());
-            btnBuscar.addActionListener(e -> buscarPalabra());
-            btnAgenda.addActionListener(e -> inicializarAgendaContactos());
+                JPanel botonesPanel = new JPanel();
+                botonesPanel.add(btnAgregarContacto);
+                botonesPanel.add(btnEliminarContacto);
+                botonesPanel.add(labelValidacionEmail);
 
-            // Añadir botones al panel
-            panelInicio.add(btnAbrir);
-            panelInicio.add(btnGuardar);
-            panelInicio.add(btnComparar);
-            panelInicio.add(btnAnalizar);
-            panelInicio.add(btnBuscar);
-            panelInicio.add(btnAgenda);
+                contactosPanel.add(new JScrollPane(listaContactos), BorderLayout.CENTER);
+                contactosPanel.add(inputsPanel, BorderLayout.NORTH);
+                contactosPanel.add(botonesPanel, BorderLayout.SOUTH);
 
-            // Añadir panelInicio al JFrame
-            getContentPane().add(panelInicio, BorderLayout.NORTH);
-        }
+                return contactosPanel;
+            }
 
-        private void crearBarraHerramientas() {
-                JToolBar toolBar = new JToolBar();
-                URL abrirIconUrl = getClass().getResource("/iconos/abrir.png");
-                if (abrirIconUrl != null) {
-                    JButton btnAbrir = new JButton(new ImageIcon(abrirIconUrl));
-                    btnAbrir.setToolTipText("Abrir archivo");
-                    btnAbrir.addActionListener(e -> abrirArchivo());
-                    toolBar.add(btnAbrir);
+            private void agregarContacto() {
+                String nombre = textFieldNombre.getText();
+                String email = textFieldEmail.getText();
+                String telefono = textFieldTelefono.getText();
+                if (!nombre.isEmpty() && !email.isEmpty() && !telefono.isEmpty()) {
+                    modeloListaContactos.addElement(new Contacto(nombre, email, telefono));
+                }
+            }
+
+            private void eliminarContacto() {
+                int selectedIndex = listaContactos.getSelectedIndex();
+                if (selectedIndex != -1) {
+                    modeloListaContactos.remove(selectedIndex);
+                }
+            }
+
+            class Contacto {
+                private String nombre;
+                private String email;
+                private String telefono;
+
+                public Contacto(String nombre, String email, String telefono) {
+                    this.nombre = nombre;
+                    this.email = email;
+                    this.telefono = telefono;
                 }
 
+                @Override
+                public String toString() {
+                    return nombre + " - " + email + " - " + telefono;
+                }
+            }
         }
+        private JPanel crearPanelGestorTextos() {
+            JPanel gestorTextosPanel = new JPanel();
+            gestorTextosPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+
+            // Crear botones
+            JButton btnNuevoTexto = new JButton("Nuevo Texto");
+            JButton btnGuardarTexto = new JButton("Guardar Texto");
+            JButton btnCompararTextos = new JButton("Comparar Archivos");
+            JButton btnAnalizarTexto = new JButton("Analizar Texto");
+            JButton btnBuscarPalabra = new JButton("Buscar Palabra");
+
+            // Añadir funcionalidad a los botones
+            btnNuevoTexto.addActionListener(e -> nuevoTexto());
+            btnGuardarTexto.addActionListener(e -> guardarTexto());
+            btnCompararTextos.addActionListener(e -> compararArchivos());
+            btnAnalizarTexto.addActionListener(e -> analizarTexto());
+            btnBuscarPalabra.addActionListener(e -> buscarPalabra());
+
+            // Añadir botones al panel
+            gestorTextosPanel.add(btnNuevoTexto);
+            gestorTextosPanel.add(btnGuardarTexto);
+            gestorTextosPanel.add(btnCompararTextos);
+            gestorTextosPanel.add(btnAnalizarTexto);
+            gestorTextosPanel.add(btnBuscarPalabra);
+
+            return gestorTextosPanel;
+        }
+
+        private void nuevoTexto() {
+            textArea.setText("");
+        }
+
 
         private void inicializarTabbedPane() {
             tabbedPane = new JTabbedPane();
@@ -159,39 +199,6 @@ import java.util.ArrayList;
                     statusLabel.setText("Posición X: " + e.getX() + ", Posición Y: " + e.getY());
                 }
             });
-        }
-
-        private void inicializarValidadorEmail() {
-            textFieldEmail = new JTextField(20);
-            labelValidacionEmail = new JLabel("Ingrese un email");
-
-            textFieldEmail.getDocument().addDocumentListener(new DocumentListener() {
-                public void changedUpdate(DocumentEvent e) {
-                    validar();
-                }
-                public void removeUpdate(DocumentEvent e) {
-                    validar();
-                }
-                public void insertUpdate(DocumentEvent e) {
-                    validar();
-                }
-
-                private void validar() {
-                    String texto = textFieldEmail.getText();
-                    if (texto.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
-                        labelValidacionEmail.setText("Email válido");
-                        labelValidacionEmail.setForeground(Color.GREEN);
-                    } else {
-                        labelValidacionEmail.setText("Email no válido");
-                        labelValidacionEmail.setForeground(Color.RED);
-                    }
-                }
-            });
-
-            JPanel panel = new JPanel();
-            panel.add(textFieldEmail);
-            panel.add(labelValidacionEmail);
-            getContentPane().add(panel, BorderLayout.NORTH);
         }
         private void inicializarHerramientaDibujo() {
             PanelDibujo panelDibujo = new PanelDibujo();
@@ -319,48 +326,7 @@ import java.util.ArrayList;
                 JOptionPane.showMessageDialog(this, "La palabra '" + palabraABuscar + "' aparece " + contador + " veces.", "Resultado de la Búsqueda", JOptionPane.INFORMATION_MESSAGE);
             }
         }
-        class Contacto {
-            private String nombre;
-            private String email;
-            private String telefono;
 
-            public Contacto(String nombre, String email, String telefono) {
-                this.nombre = nombre;
-                this.email = email;
-                this.telefono = telefono;
-            }
-            @Override
-            public String toString() {
-                return nombre + " - " + email + " - " + telefono;
-            }
-        }
-        private JList<Contacto> listaContactos;
-        private DefaultListModel<Contacto> modeloListaContactos;
-
-        private void inicializarAgendaContactos() {
-            modeloListaContactos = new DefaultListModel<>();
-            listaContactos = new JList<>(modeloListaContactos);
-
-            JFrame ventanaContactos = new JFrame("Agenda de Contactos");
-            ventanaContactos.setSize(400, 300);
-            ventanaContactos.add(new JScrollPane(listaContactos));
-
-            JButton btnAgregarContacto = new JButton("Agregar Contacto");
-            btnAgregarContacto.addActionListener(e -> agregarContacto());
-            ventanaContactos.add(btnAgregarContacto, BorderLayout.SOUTH);
-
-            ventanaContactos.setVisible(true);
-        }
-
-        private void agregarContacto() {
-            String nombre = JOptionPane.showInputDialog("Nombre del Contacto:");
-            String email = JOptionPane.showInputDialog("Email del Contacto:");
-            String telefono = JOptionPane.showInputDialog("Teléfono del Contacto:");
-
-            if (nombre != null && email != null && telefono != null) {
-                modeloListaContactos.addElement(new Contacto(nombre, email, telefono));
-            }
-        }
         public static void main(String[] args) {
             SwingUtilities.invokeLater(() -> {
                 try {
