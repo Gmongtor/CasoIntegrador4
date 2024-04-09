@@ -117,6 +117,42 @@ import java.util.ArrayList;
                 }
             });
         }
+        private JTextField textFieldEmail;
+        private JLabel labelValidacionEmail;
+
+        private void inicializarValidadorEmail() {
+            textFieldEmail = new JTextField(20);
+            labelValidacionEmail = new JLabel("Ingrese un email");
+
+            textFieldEmail.getDocument().addDocumentListener(new DocumentListener() {
+                public void changedUpdate(DocumentEvent e) {
+                    validar();
+                }
+                public void removeUpdate(DocumentEvent e) {
+                    validar();
+                }
+                public void insertUpdate(DocumentEvent e) {
+                    validar();
+                }
+
+                private void validar() {
+                    String texto = textFieldEmail.getText();
+                    if (texto.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+                        labelValidacionEmail.setText("Email válido");
+                        labelValidacionEmail.setForeground(Color.GREEN);
+                    } else {
+                        labelValidacionEmail.setText("Email no válido");
+                        labelValidacionEmail.setForeground(Color.RED);
+                    }
+                }
+            });
+
+            JPanel panel = new JPanel();
+            panel.add(textFieldEmail);
+            panel.add(labelValidacionEmail);
+            getContentPane().add(panel, BorderLayout.NORTH);
+        }
+
         public class PanelDibujo extends JPanel {
             private ArrayList<Line2D.Float> lineas = new ArrayList<>();
 
