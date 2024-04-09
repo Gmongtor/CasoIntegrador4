@@ -210,26 +210,32 @@ public class Menu extends JFrame {
     }
 
     private void buscarPalabra() {
-        String palabraABuscar = JOptionPane.showInputDialog(this, "Introduce la palabra a buscar:", "Buscar Palabra", JOptionPane.QUESTION_MESSAGE);
-        if (palabraABuscar != null && !palabraABuscar.isEmpty()) {
-            String texto = textArea.getText().toLowerCase();
-            String palabra = palabraABuscar.toLowerCase();
-            int indice = texto.indexOf(palabra);
-            int contador = 0;
-            while (indice != -1) {
-                contador++;
-                try {
-                    Highlighter highlighter = textArea.getHighlighter();
-                    Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
-                    highlighter.addHighlight(indice, indice + palabra.length(), painter);
-                } catch (BadLocationException ex) {
-                    ex.printStackTrace();
+        if (tabbedPane.getTabCount() > 0) {
+            JTextArea textAreaActual = (JTextArea) ((JScrollPane) tabbedPane.getSelectedComponent()).getViewport().getView();
+            String palabraABuscar = JOptionPane.showInputDialog(this, "Introduce la palabra a buscar:", "Buscar Palabra", JOptionPane.QUESTION_MESSAGE);
+            if (palabraABuscar != null && !palabraABuscar.isEmpty()) {
+                String texto = textAreaActual.getText().toLowerCase();
+                String palabra = palabraABuscar.toLowerCase();
+                int indice = texto.indexOf(palabra);
+                int contador = 0;
+                while (indice != -1) {
+                    contador++;
+                    try {
+                        Highlighter highlighter = textAreaActual.getHighlighter();
+                        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
+                        highlighter.addHighlight(indice, indice + palabra.length(), painter);
+                    } catch (BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
+                    indice = texto.indexOf(palabra, indice + palabra.length());
                 }
-                indice = texto.indexOf(palabra, indice + palabra.length());
+                JOptionPane.showMessageDialog(this, "La palabra '" + palabraABuscar + "' aparece " + contador + " veces.", "Resultado de la Búsqueda", JOptionPane.INFORMATION_MESSAGE);
             }
-            JOptionPane.showMessageDialog(this, "La palabra '" + palabraABuscar + "' aparece " + contador + " veces.", "Resultado de la Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No hay documento activo para buscar.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
 
     private void abrirArchivo() {
