@@ -17,6 +17,13 @@ import java.util.ArrayList;
 
 
     public class Menu extends JFrame {
+        CardLayout cardLayout = new CardLayout();
+        JPanel cardPanel = new JPanel(cardLayout);
+
+        // Paneles individuales
+        JPanel gestorDeTextosPanel = new JPanel();
+        JPanel dibujarPanel = new JPanel();
+        JPanel contactosPanel = new JPanel();
         private JTextArea textArea;
         private JFileChooser fileChooser;
         private JTabbedPane tabbedPane;
@@ -31,34 +38,39 @@ import java.util.ArrayList;
         }
 
         private void inicializarUI() {
-
             setTitle("GESTOR DE PUBLICACIONES");
             setSize(800, 600);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            textArea = new JTextArea();
-            JScrollPane scrollPane = new JScrollPane(textArea);
-            add(scrollPane, BorderLayout.CENTER);
+            // Botones para cambiar entre paneles
+            JButton gestorDeTextosBtn = new JButton("Gestor de Textos");
+            JButton dibujarBtn = new JButton("Dibujar");
+            JButton contactosBtn = new JButton("Contactos");
 
-            scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
-                int extent = scrollPane.getVerticalScrollBar().getModel().getExtent();
-                int maximum = scrollPane.getVerticalScrollBar().getMaximum();
-                int value = scrollPane.getVerticalScrollBar().getValue();
+            // Panel para los botones
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(gestorDeTextosBtn);
+            buttonPanel.add(dibujarBtn);
+            buttonPanel.add(contactosBtn);
 
-                int porcentaje = (int) ((value * 100.0) / (maximum - extent));
-                statusLabel.setText("Progreso: " + porcentaje + "%");
-            });
+            // Añadir los paneles al panel de card
+            cardPanel.add(gestorDeTextosPanel, "Gestor de Textos");
+            cardPanel.add(dibujarPanel, "Dibujar");
+            cardPanel.add(contactosPanel, "Contactos");
 
-            fileChooser = new JFileChooser();
-            crearMenuInicio();
-            crearBarraHerramientas();
-            inicializarTabbedPane();
-            inicializarStatusLabel();
-            inicializarValidadorEmail();
-            inicializarHerramientaDibujo();
+            // Añadir funcionalidad a los botones
+            gestorDeTextosBtn.addActionListener(e -> cardLayout.show(cardPanel, "Gestor de Textos"));
+            dibujarBtn.addActionListener(e -> cardLayout.show(cardPanel, "Dibujar"));
+            contactosBtn.addActionListener(e -> cardLayout.show(cardPanel, "Contactos"));
 
+            // Configurar gestorDeTextosPanel, dibujarPanel, contactosPanel aquí
+
+            // Añadir los paneles al JFrame
+            add(buttonPanel, BorderLayout.NORTH);
+            add(cardPanel, BorderLayout.CENTER);
         }
+
         private JPanel crearPanelGestorTextos() {
             // Aquí implementas la interfaz del gestor de textos
             JPanel panel = new JPanel();
