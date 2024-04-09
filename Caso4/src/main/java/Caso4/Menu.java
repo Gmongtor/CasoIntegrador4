@@ -103,6 +103,17 @@ import java.util.Map;
                 }
             });
         }
+        private void actualizarBarraDesplazamiento() {
+            JScrollPane scrollPane = new JScrollPane(textArea);
+
+            scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
+                int valorMax = e.getAdjustable().getMaximum();
+                int valorActual = e.getValue();
+                // Calcular el porcentaje de desplazamiento
+                int porcentaje = (int) (((double) valorActual / (valorMax - scrollPane.getVerticalScrollBar().getVisibleAmount())) * 100);
+                statusLabel.setText("Desplazamiento: " + porcentaje + "%");
+            });
+        }
 
 
 
