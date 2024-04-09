@@ -94,6 +94,79 @@ public class Menu extends JFrame {
     private void nuevoTexto() {
         textArea.setText("");
     }
+    private void guardarTexto() {
+        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File archivo = fileChooser.getSelectedFile();
+            try (PrintWriter out = new PrintWriter(new FileWriter(archivo))) {
+                textArea.write(out);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "No se pudo guardar el archivo", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    private void compararArchivos() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(true);
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File[] archivos = fileChooser.getSelectedFiles();
+            if (archivos.length == 2) {
+                try {
+                    String contenidoArchivo1 = new String(Files.readAllBytes(archivos[0].toPath()));
+                    String contenidoArchivo2 = new String(Files.readAllBytes(archivos[1].toPath()));
+
+                    if (contenidoArchivo1.equals(contenidoArchivo2)) {
+                        JOptionPane.showMessageDialog(this, "Los archivos son idénticos.", "Comparación de Archivos", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Los archivos son diferentes.", "Comparación de Archivos", JOptionPane.WARNING_MESSAGE);
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Error al leer los archivos.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Por favor, selecciona dos archivos para comparar.", "Error", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+    private void analizarTexto() {
+        String texto = textArea.getText();
+        String[] palabras = texto.split("\\s+");
+        int totalPalabras = palabras.length;
+
+        Map<String, Integer> frecuenciaPalabras = new HashMap<>();
+        for (String palabra : palabras) {
+            if (!palabra.isEmpty()) {
+                frecuenciaPalabras.put(palabra, frecuenciaPalabras.getOrDefault(palabra, 0) + 1);
+            }
+        }
+
+        StringBuilder estadisticas = new StringBuilder();
+        estadisticas.append("Total de palabras: ").append(totalPalabras).append("\n\nFrecuencia de palabras:\n");
+        frecuenciaPalabras.forEach((palabra, frecuencia) -> estadisticas.append(palabra).append(": ").append(frecuencia).append("\n"));
+
+        JOptionPane.showMessageDialog(this, estadisticas.toString(), "Análisis de Texto", JOptionPane.INFORMATION_MESSAGE);
+    }
+    private void buscarPalabra() {
+        String palabraABuscar = JOptionPane.showInputDialog(this, "Introduce la palabra a buscar:", "Buscar Palabra", JOptionPane.QUESTION_MESSAGE);
+        if (palabraABuscar != null && !palabraABuscar.isEmpty()) {
+            String texto = textArea.getText().toLowerCase();
+            String palabra = palabraABuscar.toLowerCase();
+            int indice = texto.indexOf(palabra);
+            int contador = 0;
+            while (indice != -1) {
+                contador++;
+                try {
+                    Highlighter highlighter = textArea.getHighlighter();
+                    Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
+                    highlighter.addHighlight(indice, indice + palabra.length(), painter);
+                } catch (BadLocationException ex) {
+                    ex.printStackTrace();
+                }
+                indice = texto.indexOf(palabra, indice + palabra.length());
+            }
+            JOptionPane.showMessageDialog(this, "La palabra '" + palabraABuscar + "' aparece " + contador + " veces.", "Resultado de la Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
 
     private void abrirArchivo() {
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
