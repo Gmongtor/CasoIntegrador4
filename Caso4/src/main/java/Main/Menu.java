@@ -63,18 +63,22 @@ public class Menu extends JFrame {
         getContentPane().add(cardPanel, BorderLayout.CENTER);
         getContentPane().add(statusLabel, BorderLayout.SOUTH);
     }
-scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-        @Override
-        public void adjustmentValueChanged(AdjustmentEvent e) {
-            // Calcular el progreso basado en la posición del scroll
-            int max = scrollPane.getVerticalScrollBar().getMaximum();
-            int value = scrollPane.getVerticalScrollBar().getValue(); // Posición actual del scrollbar
-            int extent = scrollPane.getVerticalScrollBar().getModel().getExtent(); // Altura visible del viewport
-            int progreso = (int) (((double) value / (max - extent)) * 100);
+    private void establecerSeguimientoRatonYBarra(JTextArea textArea, JScrollPane scrollPane) {
+        textArea.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                statusLabel.setText("Posición del Ratón: X=" + e.getX() + ", Y=" + e.getY());
+            }
+        });
 
-            statusLabel.setText("Progreso: " + progreso + "%");
-        }
-    });
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
+            int extent = scrollPane.getVerticalScrollBar().getModel().getExtent();
+            int maximum = scrollPane.getVerticalScrollBar().getMaximum();
+            int value = scrollPane.getVerticalScrollBar().getValue();
+            int porcentaje = (int) ((value * 100.0) / (maximum - extent));
+            statusLabel.setText("Progreso: " + porcentaje + "%");
+        });
+    }
 
     private JPanel crearPanelGestorTextos() {
         JPanel panel = new JPanel(new BorderLayout());
@@ -189,13 +193,18 @@ scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener()
     private void abrirArchivo() {
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = fileChooser.getSelectedFile();
+            JTextArea nuevaAreaTexto = new JTextArea();
             try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
-                textArea.read(reader, null);
+                nuevaAreaTexto.read(reader, null);
+                JScrollPane scrollPane = new JScrollPane(nuevaAreaTexto);
+                tabbedPane.addTab(archivo.getName(), scrollPane);
+                // Opcional: Añadir barra de progreso o seguimiento aquí específico para este textArea.
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
+
 
     class PanelDibujo extends JPanel {
         private Point puntoInicio = null;
