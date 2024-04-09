@@ -121,10 +121,27 @@ import java.util.Map;
 
         JOptionPane.showMessageDialog(this, estadisticas.toString(), "Análisis de Texto", JOptionPane.INFORMATION_MESSAGE);
     }
+        private void buscarPalabra() {
+            String palabraABuscar = JOptionPane.showInputDialog(this, "Introduce la palabra a buscar:", "Buscar Palabra", JOptionPane.QUESTION_MESSAGE);
+            if (palabraABuscar != null && !palabraABuscar.isEmpty()) {
+                String texto = textArea.getText().toLowerCase();
+                String palabra = palabraABuscar.toLowerCase();
+
+                int indice = texto.indexOf(palabra);
+                int contador = 0;
+                while (indice != -1) {
+                    contador++;
+                    indice = texto.indexOf(palabra, indice + 1);
+                }
+
+                JOptionPane.showMessageDialog(this, "La palabra '" + palabraABuscar + "' aparece " + contador + " veces.", "Resultado de la Búsqueda", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
 
 
 
-    public static void main(String[] args) {
+
+        public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             new EditorTexto().setVisible(true);
         });
