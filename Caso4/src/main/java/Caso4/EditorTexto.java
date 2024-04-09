@@ -56,6 +56,14 @@ import java.util.Map;
             itemSalir.addActionListener(e -> System.exit(0));
             menuArchivo.add(itemSalir);
 
+            JMenuItem itemBuscarPalabra = new JMenuItem("Buscar Palabra");
+            itemBuscarPalabra.addActionListener(e -> buscarPalabra());
+            menuArchivo.add(itemBuscarPalabra);
+
+            JMenuItem itemAgendaContactos = new JMenuItem("Agenda de Contactos");
+            itemAgendaContactos.addActionListener(e -> inicializarAgendaContactos());
+            menuArchivo.add(itemAgendaContactos);
+
             setJMenuBar(menuBar);
         }
 
