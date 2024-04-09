@@ -40,12 +40,18 @@ public class Menu extends JFrame {
         boton.setFont(new Font("Arial", Font.BOLD, 12)); // Cambiar la fuente, opcional
         return boton;
     }
+    private void salirDelPrograma() {
+        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Estás seguro de que quieres salir?", "Salir", JOptionPane.YES_NO_OPTION);
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }
     private void inicializarUI() {
         setTitle("ESTRUCTURA DE DATOS");
-        getContentPane().setBackground(new Color(173, 216, 230));
         setSize(800, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setBackground(new Color(135, 206, 250));
 
         // Panel de botones principales
         JPanel buttonPanel = new JPanel();
@@ -54,10 +60,14 @@ public class Menu extends JFrame {
         JButton dibujarBtn = crearBotonPersonalizado("Dibujar");
 
         JButton contactosBtn = crearBotonPersonalizado("Contactos");
+        JButton btnSalir = crearBotonPersonalizado("Salir");
+        btnSalir.addActionListener(e -> salirDelPrograma());
+
 
         buttonPanel.add(gestorDeTextosBtn);
         buttonPanel.add(dibujarBtn);
         buttonPanel.add(contactosBtn);
+        buttonPanel.add(btnSalir);
 
         // Agregar paneles al CardLayout
         cardPanel.add(crearPanelGestorTextos(), "Gestor de Textos");
