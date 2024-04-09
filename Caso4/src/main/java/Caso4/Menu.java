@@ -39,7 +39,6 @@ import java.util.ArrayList;
             textArea = new JTextArea();
             JScrollPane scrollPane = new JScrollPane(textArea);
             add(scrollPane, BorderLayout.CENTER);
-            add(scrollPane, BorderLayout.CENTER);
 
             scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
                 int extent = scrollPane.getVerticalScrollBar().getModel().getExtent();
@@ -55,6 +54,9 @@ import java.util.ArrayList;
             crearBarraHerramientas();
             inicializarTabbedPane();
             inicializarStatusLabel();
+            inicializarValidadorEmail();
+            inicializarHerramientaDibujo();
+
         }
 
         private void crearMenuInicio() {
