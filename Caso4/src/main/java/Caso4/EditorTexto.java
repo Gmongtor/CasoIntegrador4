@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EditorTexto extends JFrame {
     private JTextArea textArea;
@@ -87,6 +89,25 @@ public class EditorTexto extends JFrame {
             }
         }
     }
+    private void analizarTexto() {
+        String texto = textArea.getText();
+        String[] palabras = texto.split("\\s+");
+        int totalPalabras = palabras.length;
+
+        Map<String, Integer> frecuenciaPalabras = new HashMap<>();
+        for (String palabra : palabras) {
+            if (!palabra.isEmpty()) {
+                frecuenciaPalabras.put(palabra, frecuenciaPalabras.getOrDefault(palabra, 0) + 1);
+            }
+        }
+
+        StringBuilder estadisticas = new StringBuilder();
+        estadisticas.append("Total de palabras: ").append(totalPalabras).append("\n\nFrecuencia de palabras:\n");
+        frecuenciaPalabras.forEach((palabra, frecuencia) -> estadisticas.append(palabra).append(": ").append(frecuencia).append("\n"));
+
+        JOptionPane.showMessageDialog(this, estadisticas.toString(), "Análisis de Texto", JOptionPane.INFORMATION_MESSAGE);
+    }
+
 
 
     public static void main(String[] args) {
