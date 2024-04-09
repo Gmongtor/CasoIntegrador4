@@ -31,6 +31,7 @@ import java.util.ArrayList;
         }
 
         private void inicializarUI() {
+
             setTitle("GESTOR DE PUBLICACIONES");
             setSize(800, 600);
             setLocationRelativeTo(null);
@@ -57,6 +58,29 @@ import java.util.ArrayList;
             inicializarValidadorEmail();
             inicializarHerramientaDibujo();
 
+        }
+        private JPanel crearPanelGestorTextos() {
+            // Aquí implementas la interfaz del gestor de textos
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Gestor de Textos"));
+            // Añade tus componentes aquí
+            return panel;
+        }
+
+        private JPanel crearPanelDibujar() {
+            // Aquí implementas la interfaz de dibujo
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Área de Dibujo"));
+            // Añade tus componentes de dibujo aquí
+            return panel;
+        }
+
+        private JPanel crearPanelContactos() {
+            // Aquí implementas la interfaz de contactos
+            JPanel panel = new JPanel();
+            panel.add(new JLabel("Gestión de Contactos"));
+            // Añade tus componentes de contactos aquí
+            return panel;
         }
 
         private void crearMenuInicio() {
