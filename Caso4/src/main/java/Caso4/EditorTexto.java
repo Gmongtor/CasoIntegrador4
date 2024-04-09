@@ -1,5 +1,8 @@
 package Caso4;
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -23,10 +26,10 @@ import java.util.Map;
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
             textArea = new JTextArea();
-            add(new JScrollPane(textArea));
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            add(scrollPane, BorderLayout.CENTER);
 
             fileChooser = new JFileChooser();
-
             crearMenu();
         }
 
@@ -66,8 +69,24 @@ import java.util.Map;
 
             setJMenuBar(menuBar);
         }
+        private void crearBarraHerramientas() {
+            JToolBar toolBar = new JToolBar();
+            JButton btnAbrir = new JButton(new ImageIcon(getClass().getResource("/iconos/abrir.png")));
+            btnAbrir.setToolTipText("Abrir archivo");
+            btnAbrir.addActionListener(e -> abrirArchivo());
+            toolBar.add(btnAbrir);
 
-    private void abrirArchivo() {
+            JButton btnGuardar = new JButton(new ImageIcon(getClass().getResource("/iconos/guardar.png")));
+            btnGuardar.setToolTipText("Guardar texto");
+            btnGuardar.addActionListener(e -> guardarTexto());
+            toolBar.add(btnGuardar);
+
+            getContentPane().add(toolBar, BorderLayout.NORTH);
+        }
+
+
+
+        private void abrirArchivo() {
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = fileChooser.getSelectedFile();
             try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
@@ -134,14 +153,19 @@ import java.util.Map;
             if (palabraABuscar != null && !palabraABuscar.isEmpty()) {
                 String texto = textArea.getText().toLowerCase();
                 String palabra = palabraABuscar.toLowerCase();
-
                 int indice = texto.indexOf(palabra);
                 int contador = 0;
                 while (indice != -1) {
                     contador++;
-                    indice = texto.indexOf(palabra, indice + 1);
+                    try {
+                        Highlighter highlighter = textArea.getHighlighter();
+                        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
+                        highlighter.addHighlight(indice, indice + palabra.length(), painter);
+                    } catch (BadLocationException ex) {
+                        ex.printStackTrace();
+                    }
+                    indice = texto.indexOf(palabra, indice + palabra.length());
                 }
-
                 JOptionPane.showMessageDialog(this, "La palabra '" + palabraABuscar + "' aparece " + contador + " veces.", "Resultado de la Búsqueda", JOptionPane.INFORMATION_MESSAGE);
             }
         }
@@ -197,10 +221,10 @@ import java.util.Map;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                new EditorTexto().setVisible(true);
-            });
-        }
-    }
+                });
+new EditorTexto().setVisible(true);
+
+}
 }
 
 
