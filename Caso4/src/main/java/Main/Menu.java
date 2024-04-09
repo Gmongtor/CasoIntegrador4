@@ -34,7 +34,7 @@ public class Menu extends JFrame {
     }
 
     private void inicializarUI() {
-        setTitle("GESTOR DE PUBLICACIONES");
+        setTitle("ESTRUCTURA DE DATOS");
         setSize(800, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,8 +81,12 @@ public class Menu extends JFrame {
     }
 
     private JPanel crearPanelGestorTextos() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(tabbedPane, BorderLayout.CENTER);
+        // Asegúrate de inicializar el tabbedPane si no lo has hecho antes
+        tabbedPane = new JTabbedPane();
+
+        // Panel para contener los botones de acciones
+        JPanel panelBotones = new JPanel();
+        panelBotones.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         JButton btnNuevoTexto = new JButton("Nuevo Texto");
         btnNuevoTexto.addActionListener(e -> nuevoTexto());
@@ -102,20 +106,49 @@ public class Menu extends JFrame {
         JButton btnBuscarEnTexto = new JButton("Buscar en Texto");
         btnBuscarEnTexto.addActionListener(e -> buscarPalabra());
 
-        // Agregar botones al panel
-        panel.add(btnNuevoTexto);
-        panel.add(btnAbrirTexto);
-        panel.add(btnGuardarTexto);
-        panel.add(btnCompararTextos);
-        panel.add(btnAnalizarTexto);
-        panel.add(btnBuscarEnTexto);
+        JButton btnCerrarDocumento = new JButton("Cerrar Documento Actual");
+        btnCerrarDocumento.addActionListener(e -> cerrarDocumentoActual());
 
-        return panel;
+        panelBotones.add(btnCerrarDocumento);
+        panelBotones.add(btnNuevoTexto);
+        panelBotones.add(btnAbrirTexto);
+        panelBotones.add(btnGuardarTexto);
+        panelBotones.add(btnCompararTextos);
+        panelBotones.add(btnAnalizarTexto);
+        panelBotones.add(btnBuscarEnTexto);
+        panelBotones.add(btnCerrarDocumento);
+
+        // Panel principal que será devuelto y agregado al cardLayout
+        JPanel panelPrincipal = new JPanel(new BorderLayout());
+        panelPrincipal.add(panelBotones, BorderLayout.NORTH);
+        panelPrincipal.add(tabbedPane, BorderLayout.CENTER);
+
+        // Agrega un documento inicial al abrir la aplicación (opcional)
+        nuevoTexto();
+
+        return panelPrincipal;
+    }
+    private void cerrarDocumentoActual() {
+        if (tabbedPane.getTabCount() > 0) {
+            int dialogResult = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que quieres cerrar el documento actual?", "Advertencia", JOptionPane.YES_NO_OPTION);
+            if(dialogResult == JOptionPane.YES_OPTION){
+                int indiceActual = tabbedPane.getSelectedIndex();
+                if (indiceActual != -1) {
+                    tabbedPane.remove(indiceActual);
+                }
+            }
+        }
     }
 
     private void nuevoTexto() {
-        textArea.setText("");
+        JTextArea nuevaAreaTexto = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(nuevaAreaTexto);
+        tabbedPane.addTab("Documento " + (tabbedPane.getTabCount() + 1), scrollPane);
+        tabbedPane.setSelectedComponent(scrollPane); // Selecciona la nueva pestaña automáticamente
+        establecerSeguimientoRatonYBarra(nuevaAreaTexto, scrollPane); // Asegura seguimiento y progreso
     }
+
+
     private void guardarTexto() {
         if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = fileChooser.getSelectedFile();
@@ -150,23 +183,32 @@ public class Menu extends JFrame {
         }
     }
     private void analizarTexto() {
-        String texto = textArea.getText();
-        String[] palabras = texto.split("\\s+");
-        int totalPalabras = palabras.length;
-
-        Map<String, Integer> frecuenciaPalabras = new HashMap<>();
-        for (String palabra : palabras) {
-            if (!palabra.isEmpty()) {
-                frecuenciaPalabras.put(palabra, frecuenciaPalabras.getOrDefault(palabra, 0) + 1);
+        if (tabbedPane.getTabCount() > 0) {
+            JTextArea textAreaActual = (JTextArea) ((JScrollPane) tabbedPane.getSelectedComponent()).getViewport().getView();
+            String texto = textAreaActual.getText().toLowerCase();
+            String[] palabras = texto.split("\\s+");
+            if (palabras.length == 0) {
+                JOptionPane.showMessageDialog(this, "No hay palabras para analizar.", "Análisis de Texto", JOptionPane.INFORMATION_MESSAGE);
+                return;
             }
+            int totalPalabras = palabras.length;
+            Map<String, Integer> frecuenciaPalabras = new HashMap<>();
+            for (String palabra : palabras) {
+                if (!palabra.isEmpty()) {
+                    frecuenciaPalabras.put(palabra, frecuenciaPalabras.getOrDefault(palabra, 0) + 1);
+                }
+            }
+
+            StringBuilder estadisticas = new StringBuilder();
+            estadisticas.append("Total de palabras: ").append(totalPalabras).append("\n\nFrecuencia de palabras:\n");
+            frecuenciaPalabras.forEach((palabra, frecuencia) -> estadisticas.append(palabra).append(": ").append(frecuencia).append("\n"));
+
+            JOptionPane.showMessageDialog(this, estadisticas.toString(), "Análisis de Texto", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No hay documento activo para analizar.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        StringBuilder estadisticas = new StringBuilder();
-        estadisticas.append("Total de palabras: ").append(totalPalabras).append("\n\nFrecuencia de palabras:\n");
-        frecuenciaPalabras.forEach((palabra, frecuencia) -> estadisticas.append(palabra).append(": ").append(frecuencia).append("\n"));
-
-        JOptionPane.showMessageDialog(this, estadisticas.toString(), "Análisis de Texto", JOptionPane.INFORMATION_MESSAGE);
     }
+
     private void buscarPalabra() {
         String palabraABuscar = JOptionPane.showInputDialog(this, "Introduce la palabra a buscar:", "Buscar Palabra", JOptionPane.QUESTION_MESSAGE);
         if (palabraABuscar != null && !palabraABuscar.isEmpty()) {
@@ -194,16 +236,17 @@ public class Menu extends JFrame {
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = fileChooser.getSelectedFile();
             JTextArea nuevaAreaTexto = new JTextArea();
+            JScrollPane scrollPane = new JScrollPane(nuevaAreaTexto);
             try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
                 nuevaAreaTexto.read(reader, null);
-                JScrollPane scrollPane = new JScrollPane(nuevaAreaTexto);
                 tabbedPane.addTab(archivo.getName(), scrollPane);
-                // Opcional: Añadir barra de progreso o seguimiento aquí específico para este textArea.
+                establecerSeguimientoRatonYBarra(nuevaAreaTexto, scrollPane); // Llama aquí al método
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "No se pudo abrir el archivo", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
+
 
 
     class PanelDibujo extends JPanel {
