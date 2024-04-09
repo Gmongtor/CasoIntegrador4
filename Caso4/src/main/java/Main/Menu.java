@@ -129,16 +129,17 @@ public class Menu extends JFrame {
         return panelPrincipal;
     }
     private void cerrarDocumentoActual() {
-        if (tabbedPane.getTabCount() > 0) {
-            int dialogResult = JOptionPane.showConfirmDialog(null, "¿Estás seguro de que quieres cerrar el documento actual?", "Advertencia", JOptionPane.YES_NO_OPTION);
-            if(dialogResult == JOptionPane.YES_OPTION){
-                int indiceActual = tabbedPane.getSelectedIndex();
-                if (indiceActual != -1) {
-                    tabbedPane.remove(indiceActual);
-                }
+        int selectedIndex = tabbedPane.getSelectedIndex();
+        if (selectedIndex != -1) {
+            int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de querer cerrar este documento?", "Cerrar Documento", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                tabbedPane.remove(selectedIndex);
             }
+        } else {
+            JOptionPane.showMessageDialog(this, "No hay ningún documento abierto para cerrar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
+
 
     private void nuevoTexto() {
         JTextArea nuevaAreaTexto = new JTextArea();
