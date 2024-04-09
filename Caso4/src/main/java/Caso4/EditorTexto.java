@@ -7,43 +7,57 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EditorTexto extends JFrame {
-    private JTextArea textArea;
-    private JFileChooser fileChooser;
 
-    public EditorTexto() {
-        inicializarUI();
-    }
+    public class EditorTexto extends JFrame {
+        private JTextArea textArea;
+        private JFileChooser fileChooser;
 
-    private void inicializarUI() {
-        setTitle("Editor de Texto Avanzado");
-        setSize(800, 600);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        public EditorTexto() {
+            inicializarUI();
+        }
 
-        textArea = new JTextArea();
-        add(new JScrollPane(textArea));
+        private void inicializarUI() {
+            setTitle("Editor de Texto Avanzado");
+            setSize(800, 600);
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        fileChooser = new JFileChooser();
+            textArea = new JTextArea();
+            add(new JScrollPane(textArea));
 
-        JMenuBar menuBar = new JMenuBar();
-        setJMenuBar(menuBar);
+            fileChooser = new JFileChooser();
 
-        JMenu menuArchivo = new JMenu("Archivo");
-        menuBar.add(menuArchivo);
+            crearMenu();
+        }
 
-        JMenuItem itemAbrir = new JMenuItem("Abrir");
-        itemAbrir.addActionListener(e -> abrirArchivo());
-        menuArchivo.add(itemAbrir);
+        private void crearMenu() {
+            JMenuBar menuBar = new JMenuBar();
 
-        JMenuItem itemGuardar = new JMenuItem("Guardar");
-        itemGuardar.addActionListener(e -> guardarTexto());
-        menuArchivo.add(itemGuardar);
+            JMenu menuArchivo = new JMenu("Archivo");
+            menuBar.add(menuArchivo);
 
-        JMenuItem itemSalir = new JMenuItem("Salir");
-        itemSalir.addActionListener(e -> System.exit(0));
-        menuArchivo.add(itemSalir);
-    }
+            JMenuItem itemAbrir = new JMenuItem("Abrir");
+            itemAbrir.addActionListener(e -> abrirArchivo());
+            menuArchivo.add(itemAbrir);
+
+            JMenuItem itemGuardar = new JMenuItem("Guardar");
+            itemGuardar.addActionListener(e -> guardarTexto());
+            menuArchivo.add(itemGuardar);
+
+            JMenuItem itemComparar = new JMenuItem("Comparar Archivos");
+            itemComparar.addActionListener(e -> compararArchivos());
+            menuArchivo.add(itemComparar);
+
+            JMenuItem itemAnalizar = new JMenuItem("Analizar Texto");
+            itemAnalizar.addActionListener(e -> analizarTexto());
+            menuArchivo.add(itemAnalizar);
+
+            JMenuItem itemSalir = new JMenuItem("Salir");
+            itemSalir.addActionListener(e -> System.exit(0));
+            menuArchivo.add(itemSalir);
+
+            setJMenuBar(menuBar);
+        }
 
     private void abrirArchivo() {
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
