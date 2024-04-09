@@ -24,7 +24,7 @@ import java.util.Map;
         }
 
         private void inicializarUI() {
-            setTitle("GESTIÓN DE PUBLICACIONES");
+            setTitle("GESTOR DE PUBLICACIONES");
             setSize(800, 600);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -32,10 +32,22 @@ import java.util.Map;
             textArea = new JTextArea();
             JScrollPane scrollPane = new JScrollPane(textArea);
             add(scrollPane, BorderLayout.CENTER);
+            add(scrollPane, BorderLayout.CENTER);
+
+            scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
+                int extent = scrollPane.getVerticalScrollBar().getModel().getExtent();
+                int maximum = scrollPane.getVerticalScrollBar().getMaximum();
+                int value = scrollPane.getVerticalScrollBar().getValue();
+
+                int porcentaje = (int) ((value * 100.0) / (maximum - extent));
+                statusLabel.setText("Progreso: " + porcentaje + "%");
+            });
 
             fileChooser = new JFileChooser();
             crearMenuInicio();
             crearBarraHerramientas();
+            inicializarTabbedPane();
+            inicializarStatusLabel();
         }
 
         private void crearMenuInicio() {
@@ -101,17 +113,6 @@ import java.util.Map;
                 public void mouseMoved(MouseEvent e) {
                     statusLabel.setText("Posición X: " + e.getX() + ", Posición Y: " + e.getY());
                 }
-            });
-        }
-        private void actualizarBarraDesplazamiento() {
-            JScrollPane scrollPane = new JScrollPane(textArea);
-
-            scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
-                int valorMax = e.getAdjustable().getMaximum();
-                int valorActual = e.getValue();
-                // Calcular el porcentaje de desplazamiento
-                int porcentaje = (int) (((double) valorActual / (valorMax - scrollPane.getVerticalScrollBar().getVisibleAmount())) * 100);
-                statusLabel.setText("Desplazamiento: " + porcentaje + "%");
             });
         }
 
