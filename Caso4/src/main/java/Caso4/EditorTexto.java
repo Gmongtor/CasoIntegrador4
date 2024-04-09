@@ -6,16 +6,17 @@ import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
 
-    public class EditorTexto extends JFrame {
+    public class Menu extends JFrame {
         private JTextArea textArea;
         private JFileChooser fileChooser;
 
-        public EditorTexto() {
+        public Menu() {
             inicializarUI();
         }
 
@@ -30,58 +31,51 @@ import java.util.Map;
             add(scrollPane, BorderLayout.CENTER);
 
             fileChooser = new JFileChooser();
-            crearMenu();
+            crearMenuInicio();
+            crearBarraHerramientas();
         }
 
-        private void crearMenu() {
-            JMenuBar menuBar = new JMenuBar();
+        private void crearMenuInicio() {
+            JPanel panelInicio = new JPanel();
+            panelInicio.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
-            JMenu menuArchivo = new JMenu("Archivo");
-            menuBar.add(menuArchivo);
+            JButton btnAbrir = new JButton("Abrir");
+            JButton btnGuardar = new JButton("Guardar");
+            JButton btnComparar = new JButton("Comparar Archivos");
+            JButton btnAnalizar = new JButton("Analizar Texto");
+            JButton btnBuscar = new JButton("Buscar Palabra");
+            JButton btnAgenda = new JButton("Agenda de Contactos");
 
-            JMenuItem itemAbrir = new JMenuItem("Abrir");
-            itemAbrir.addActionListener(e -> abrirArchivo());
-            menuArchivo.add(itemAbrir);
-
-            JMenuItem itemGuardar = new JMenuItem("Guardar");
-            itemGuardar.addActionListener(e -> guardarTexto());
-            menuArchivo.add(itemGuardar);
-
-            JMenuItem itemComparar = new JMenuItem("Comparar Archivos");
-            itemComparar.addActionListener(e -> compararArchivos());
-            menuArchivo.add(itemComparar);
-
-            JMenuItem itemAnalizar = new JMenuItem("Analizar Texto");
-            itemAnalizar.addActionListener(e -> analizarTexto());
-            menuArchivo.add(itemAnalizar);
-
-            JMenuItem itemSalir = new JMenuItem("Salir");
-            itemSalir.addActionListener(e -> System.exit(0));
-            menuArchivo.add(itemSalir);
-
-            JMenuItem itemBuscarPalabra = new JMenuItem("Buscar Palabra");
-            itemBuscarPalabra.addActionListener(e -> buscarPalabra());
-            menuArchivo.add(itemBuscarPalabra);
-
-            JMenuItem itemAgendaContactos = new JMenuItem("Agenda de Contactos");
-            itemAgendaContactos.addActionListener(e -> inicializarAgendaContactos());
-            menuArchivo.add(itemAgendaContactos);
-
-            setJMenuBar(menuBar);
-        }
-        private void crearBarraHerramientas() {
-            JToolBar toolBar = new JToolBar();
-            JButton btnAbrir = new JButton(new ImageIcon(getClass().getResource("/iconos/abrir.png")));
-            btnAbrir.setToolTipText("Abrir archivo");
+            // Añadir funcionalidad a los botones
             btnAbrir.addActionListener(e -> abrirArchivo());
-            toolBar.add(btnAbrir);
-
-            JButton btnGuardar = new JButton(new ImageIcon(getClass().getResource("/iconos/guardar.png")));
-            btnGuardar.setToolTipText("Guardar texto");
             btnGuardar.addActionListener(e -> guardarTexto());
-            toolBar.add(btnGuardar);
+            btnComparar.addActionListener(e -> compararArchivos());
+            btnAnalizar.addActionListener(e -> analizarTexto());
+            btnBuscar.addActionListener(e -> buscarPalabra());
+            btnAgenda.addActionListener(e -> inicializarAgendaContactos());
 
-            getContentPane().add(toolBar, BorderLayout.NORTH);
+            // Añadir botones al panel
+            panelInicio.add(btnAbrir);
+            panelInicio.add(btnGuardar);
+            panelInicio.add(btnComparar);
+            panelInicio.add(btnAnalizar);
+            panelInicio.add(btnBuscar);
+            panelInicio.add(btnAgenda);
+
+            // Añadir panelInicio al JFrame
+            getContentPane().add(panelInicio, BorderLayout.NORTH);
+        }
+
+        private void crearBarraHerramientas() {
+                JToolBar toolBar = new JToolBar();
+                URL abrirIconUrl = getClass().getResource("/iconos/abrir.png");
+                if (abrirIconUrl != null) {
+                    JButton btnAbrir = new JButton(new ImageIcon(abrirIconUrl));
+                    btnAbrir.setToolTipText("Abrir archivo");
+                    btnAbrir.addActionListener(e -> abrirArchivo());
+                    toolBar.add(btnAbrir);
+                }
+
         }
 
 
@@ -217,14 +211,19 @@ import java.util.Map;
         public static void main(String[] args) {
             SwingUtilities.invokeLater(() -> {
                 try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    // Prueba con Nimbus o el Look and Feel del sistema para ver si soluciona el problema
+                    for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                        if ("Nimbus".equals(info.getName())) {
+                            UIManager.setLookAndFeel(info.getClassName());
+                            break;
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                });
-new EditorTexto().setVisible(true);
-
-}
+                new Menu().setVisible(true);
+            });
+        }
 }
 
 
