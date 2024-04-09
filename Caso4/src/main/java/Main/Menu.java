@@ -395,9 +395,6 @@ public class Menu extends JFrame {
             modeloListaContactos.addElement(new Contacto(textFieldNombre.getText(), textFieldEmail.getText(), textFieldTelefono.getText()));
         }
     }
-
-    // Define la clase Contacto y otros métodos necesarios aquí...
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Menu().setVisible(true));
     }
