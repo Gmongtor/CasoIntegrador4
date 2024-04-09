@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.Files;
 
 public class EditorTexto extends JFrame {
     private JTextArea textArea;
@@ -63,6 +64,30 @@ public class EditorTexto extends JFrame {
             }
         }
     }
+    private void compararArchivos() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(true);
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File[] archivos = fileChooser.getSelectedFiles();
+            if (archivos.length == 2) {
+                try {
+                    String contenidoArchivo1 = new String(Files.readAllBytes(archivos[0].toPath()));
+                    String contenidoArchivo2 = new String(Files.readAllBytes(archivos[1].toPath()));
+
+                    if (contenidoArchivo1.equals(contenidoArchivo2)) {
+                        JOptionPane.showMessageDialog(this, "Los archivos son idénticos.", "Comparación de Archivos", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Los archivos son diferentes.", "Comparación de Archivos", JOptionPane.WARNING_MESSAGE);
+                    }
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Error al leer los archivos.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Por favor, selecciona dos archivos para comparar.", "Error", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
