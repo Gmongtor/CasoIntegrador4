@@ -179,14 +179,54 @@ public class Menu extends JFrame {
         }
     }
 
+    class PanelDibujo extends JPanel {
+        private Point puntoInicio = null;
+        private Point puntoFinal = null;
+        private ArrayList<Line2D> lineas = new ArrayList<>();
+
+        public PanelDibujo() {
+            setBackground(Color.WHITE);
+            addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                    puntoInicio = e.getPoint();
+                }
+
+                public void mouseReleased(MouseEvent e) {
+                    if (puntoInicio != null) {
+                        puntoFinal = e.getPoint();
+                        lineas.add(new Line2D.Double(puntoInicio, puntoFinal));
+                        puntoInicio = null;
+                        puntoFinal = null;
+                        repaint();
+                    }
+                }
+            });
+
+            addMouseMotionListener(new MouseMotionAdapter() {
+                public void mouseDragged(MouseEvent e) {
+                    puntoFinal = e.getPoint();
+                    repaint();
+                }
+            });
+        }
+
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+            for (Line2D linea : lineas) {
+                g2.draw(linea);
+            }
+            if (puntoInicio != null && puntoFinal != null) {
+                g2.draw(new Line2D.Double(puntoInicio, puntoFinal));
+            }
+        }
+    }
 
     private JPanel crearPanelDibujo() {
-        // Implementa tu panel de dibujo aquí
-        JPanel panel = new JPanel();
-        panel.add(new JLabel("Área de dibujo"));
-        // Agrega funcionalidades de dibujo
-        return panel;
+        PanelDibujo panelDibujo = new PanelDibujo();
+        return panelDibujo;
     }
+
 
     private JPanel crearPanelContactos() {
         JPanel panel = new JPanel(new BorderLayout());
