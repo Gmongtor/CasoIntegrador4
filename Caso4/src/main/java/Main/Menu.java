@@ -32,18 +32,28 @@ public class Menu extends JFrame {
     public Menu() {
         inicializarUI();
     }
-
+    private JButton crearBotonPersonalizado(String texto) {
+        JButton boton = new JButton(texto);
+        boton.setBackground(new Color(0, 0, 139)); // Un ejemplo de azul oscuro
+        boton.setForeground(Color.YELLOW); // Texto amarillo
+        boton.setFocusPainted(false); // Quitar el borde de enfoque
+        boton.setFont(new Font("Arial", Font.BOLD, 12)); // Cambiar la fuente, opcional
+        return boton;
+    }
     private void inicializarUI() {
         setTitle("ESTRUCTURA DE DATOS");
+        getContentPane().setBackground(new Color(173, 216, 230));
         setSize(800, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Panel de botones principales
         JPanel buttonPanel = new JPanel();
-        JButton gestorDeTextosBtn = new JButton("Gestor de Textos");
-        JButton dibujarBtn = new JButton("Dibujar");
-        JButton contactosBtn = new JButton("Contactos");
+        JButton gestorDeTextosBtn = crearBotonPersonalizado("Gestor de Textos");
+
+        JButton dibujarBtn = crearBotonPersonalizado("Dibujar");
+
+        JButton contactosBtn = crearBotonPersonalizado("Contactos");
 
         buttonPanel.add(gestorDeTextosBtn);
         buttonPanel.add(dibujarBtn);
@@ -88,25 +98,25 @@ public class Menu extends JFrame {
         JPanel panelBotones = new JPanel();
         panelBotones.setLayout(new FlowLayout(FlowLayout.LEFT));
 
-        JButton btnNuevoTexto = new JButton("Nuevo Texto");
+        JButton btnNuevoTexto = crearBotonPersonalizado("Nuevo Texto")  ;
         btnNuevoTexto.addActionListener(e -> nuevoTexto());
 
-        JButton btnAbrirTexto = new JButton("Abrir Texto");
+        JButton btnAbrirTexto = crearBotonPersonalizado("Abrir Texto")  ;
         btnAbrirTexto.addActionListener(e -> abrirArchivo());
 
-        JButton btnGuardarTexto = new JButton("Guardar Texto");
+        JButton btnGuardarTexto = crearBotonPersonalizado("Guardar Texto")  ;
         btnGuardarTexto.addActionListener(e -> guardarTexto());
 
-        JButton btnCompararTextos = new JButton("Comparar Textos");
+        JButton btnCompararTextos = crearBotonPersonalizado("Comparar Textos")  ;
         btnCompararTextos.addActionListener(e -> compararArchivos());
 
-        JButton btnAnalizarTexto = new JButton("Analizar Texto");
+        JButton btnAnalizarTexto = crearBotonPersonalizado("Analizar Texto")  ;
         btnAnalizarTexto.addActionListener(e -> analizarTexto());
 
-        JButton btnBuscarEnTexto = new JButton("Buscar en Texto");
+        JButton btnBuscarEnTexto =  crearBotonPersonalizado("Buscar en Texto")  ;
         btnBuscarEnTexto.addActionListener(e -> buscarPalabra());
 
-        JButton btnCerrarDocumento = new JButton("Cerrar Documento Actual");
+        JButton btnCerrarDocumento = crearBotonPersonalizado("Cerrar Documento")  ;
         btnCerrarDocumento.addActionListener(e -> cerrarDocumentoActual());
 
         panelBotones.add(btnCerrarDocumento);
@@ -257,44 +267,47 @@ public class Menu extends JFrame {
 
 
     class PanelDibujo extends JPanel {
-        private Point puntoInicio = null;
-        private Point puntoFinal = null;
-        private ArrayList<Line2D> lineas = new ArrayList<>();
+        private ArrayList<Point> puntos = new ArrayList<>();
 
         public PanelDibujo() {
             setBackground(Color.WHITE);
+
             addMouseListener(new MouseAdapter() {
+                @Override
                 public void mousePressed(MouseEvent e) {
-                    puntoInicio = e.getPoint();
+                    // Comienza un nuevo trazo
+                    puntos.clear();
+                    puntos.add(e.getPoint());
                 }
 
+                @Override
                 public void mouseReleased(MouseEvent e) {
-                    if (puntoInicio != null) {
-                        puntoFinal = e.getPoint();
-                        lineas.add(new Line2D.Double(puntoInicio, puntoFinal));
-                        puntoInicio = null;
-                        puntoFinal = null;
-                        repaint();
-                    }
+                    // Finaliza el trazo actual
+                    puntos.add(e.getPoint());
+                    repaint();
                 }
             });
 
             addMouseMotionListener(new MouseMotionAdapter() {
+                @Override
                 public void mouseDragged(MouseEvent e) {
-                    puntoFinal = e.getPoint();
+                    // Añade puntos al trazo actual mientras el ratón se arrastra
+                    puntos.add(e.getPoint());
                     repaint();
                 }
             });
         }
 
+        @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
-            for (Line2D linea : lineas) {
-                g2.draw(linea);
-            }
-            if (puntoInicio != null && puntoFinal != null) {
-                g2.draw(new Line2D.Double(puntoInicio, puntoFinal));
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            for (int i = 0; i < puntos.size() - 1; ++i) {
+                Point puntoInicio = puntos.get(i);
+                Point puntoFinal = puntos.get(i + 1);
+                g2.drawLine(puntoInicio.x, puntoInicio.y, puntoFinal.x, puntoFinal.y);
             }
         }
     }
