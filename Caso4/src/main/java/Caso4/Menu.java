@@ -155,6 +155,10 @@ import java.util.ArrayList;
             panel.add(labelValidacionEmail);
             getContentPane().add(panel, BorderLayout.NORTH);
         }
+        private void inicializarHerramientaDibujo() {
+            PanelDibujo panelDibujo = new PanelDibujo();
+            getContentPane().add(panelDibujo, BorderLayout.CENTER);
+        }
         public class PanelDibujo extends JPanel {
             private ArrayList<Line2D.Float> lineas = new ArrayList<>();
 
