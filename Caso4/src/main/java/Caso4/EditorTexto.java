@@ -17,7 +17,7 @@ import java.util.Map;
         }
 
         private void inicializarUI() {
-            setTitle("Editor de Texto Avanzado");
+            setTitle("GESTIÓN DE PUBLICACIONES");
             setSize(800, 600);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -191,9 +191,15 @@ import java.util.Map;
             }
         }
         public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new EditorTexto().setVisible(true);
-        });
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                new EditorTexto().setVisible(true);
+            });
+        }
     }
 }
 
