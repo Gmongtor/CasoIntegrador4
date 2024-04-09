@@ -1,5 +1,7 @@
 package Caso4;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
@@ -19,6 +21,9 @@ import java.util.ArrayList;
         private JFileChooser fileChooser;
         private JTabbedPane tabbedPane;
         private JLabel statusLabel;
+        private JTextField textFieldEmail;
+        private JLabel labelValidacionEmail;
+
 
 
         public Menu() {
@@ -117,8 +122,6 @@ import java.util.ArrayList;
                 }
             });
         }
-        private JTextField textFieldEmail;
-        private JLabel labelValidacionEmail;
 
         private void inicializarValidadorEmail() {
             textFieldEmail = new JTextField(20);
@@ -152,7 +155,6 @@ import java.util.ArrayList;
             panel.add(labelValidacionEmail);
             getContentPane().add(panel, BorderLayout.NORTH);
         }
-
         public class PanelDibujo extends JPanel {
             private ArrayList<Line2D.Float> lineas = new ArrayList<>();
 
